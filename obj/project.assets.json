@@ -3495,11 +3495,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Labb_2_SQL\\Labb_2_SQL.csproj",
-      "projectName": "Labb_2_SQL",
-      "projectPath": "C:\\Users\\Administrator\\Desktop\\Labb_2_SQL\\Labb_2_SQL.csproj",
+      "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Labb-2-SQL-Server-Managment-Application\\Labb-2-SQL-Server-Managment-Application.csproj",
+      "projectName": "Labb-2-SQL-Server-Managment-Application",
+      "projectPath": "C:\\Users\\Administrator\\Desktop\\Labb-2-SQL-Server-Managment-Application\\Labb-2-SQL-Server-Managment-Application.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Administrator\\Desktop\\Labb_2_SQL\\obj\\",
+      "outputPath": "C:\\Users\\Administrator\\Desktop\\Labb-2-SQL-Server-Managment-Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
