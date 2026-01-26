@@ -1,1 +1,1 @@
-# Labb-3-SQL-Server-Managment-Application
+# Labb-2-SQL-Server-Managment-Application
