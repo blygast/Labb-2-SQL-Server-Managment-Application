@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Labb-2-SQL-Server-Managment-Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af9216abf21d5be1a4b57ab226bd6e25b82f45e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+982ada4d949c3b274cc6ec2860d12cac7ffdb543")]
 [assembly: System.Reflection.AssemblyProductAttribute("Labb-2-SQL-Server-Managment-Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Labb-2-SQL-Server-Managment-Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
