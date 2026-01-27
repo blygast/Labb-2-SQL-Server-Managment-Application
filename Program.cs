@@ -7,6 +7,7 @@ namespace BokhandelApp
     {
         private const string MenuChoice_ListStock = "1";
         private const string MenuChoice_AddBook = "2";
+        private const string MenuChoice_RemoveBook = "3";
         private const string MenuChoice_Exit = "0";
         private const int TitleMaxLength = 30;
         static void Main(string[] args)
@@ -25,6 +26,9 @@ namespace BokhandelApp
                         break;
                     case MenuChoice_AddBook:
                         AddBookToStore();
+                        break;
+                    case MenuChoice_RemoveBook:
+                        RemoveBookFromStore();
                         break;
                     case MenuChoice_Exit:
                         running = false;
@@ -254,6 +258,116 @@ namespace BokhandelApp
                     context.SaveChanges();
                     Console.WriteLine($"\nBoken '{TruncateString(selectedBook.Title, 40)}' har lagts till i {selectedStore.StoreName}.");
                     Console.WriteLine($"Antal i lager: {quantity}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ett fel uppstod: {ex.Message}");
+                Console.WriteLine("Kontrollera databasanslutningen och försök igen.");
+            }
+            finally
+            {
+                PressKeyToContinue();
+            }
+        }
+
+        static void RemoveBookFromStore()
+        {
+            try
+            {
+                using var context = new BookstoreLabbContext();
+
+                Console.Clear();
+                Console.WriteLine("\n <-- TA BORT BOK FRÅN BUTIK -->\n");
+
+                var stores = context.Stores.ToList();
+
+                if (!stores.Any())
+                {
+                    Console.WriteLine("Inga butiker hittades i databasen.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                foreach (var store in stores)
+                {
+                    Console.WriteLine($"{store.StoreId}. {store.StoreName}");
+                }
+
+                Console.Write("\nVälj butik: ");
+
+                if (!int.TryParse(Console.ReadLine()?.Trim(), out int storeId))
+                {
+                    Console.WriteLine("Ogiltigt val. Vänligen ange ett numeriskt värde.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                var selectedStore = context.Stores
+                    .Include(s => s.BookBalances)
+                        .ThenInclude(bb => bb.IsbnNavigation)
+                    .FirstOrDefault(s => s.StoreId == storeId);
+
+                if (selectedStore == null)
+                {
+                    Console.WriteLine("Butiken hittades inte. Kontrollera nummret och försök igen.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                if (!selectedStore.BookBalances.Any())
+                {
+                    Console.WriteLine($"Butiken '{selectedStore.StoreName}' har inga böcker i lagret.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                Console.Clear();
+                Console.WriteLine($"\n <-- BÖCKER I {selectedStore.StoreName.ToUpper()} -->\n");
+                Console.WriteLine($"{"ISBN",-15} {"Titel",-40} {"Antal",-10}");
+                Console.WriteLine(new string('-', 70));
+
+                var orderedBalances = selectedStore.BookBalances.OrderBy(bb => bb.IsbnNavigation.Title).ToList();
+
+                foreach (var balance in orderedBalances)
+                {
+                    string title = TruncateString(balance.IsbnNavigation.Title, 40);
+                    Console.WriteLine($"{balance.Isbn,-15} {title,-40} {balance.AmountInStock,-10}");
+                }
+
+                Console.Write("\nAnge ISBN för boken du vill ta bort: ");
+                string? isbn = Console.ReadLine()?.Trim();
+
+                if (string.IsNullOrEmpty(isbn))
+                {
+                    Console.WriteLine("Ogiltigt ISBN.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                var bookBalance = context.BookBalances
+                    .Include(bb => bb.IsbnNavigation)
+                    .FirstOrDefault(bb => bb.StoreId == storeId && bb.Isbn == isbn);
+
+                if (bookBalance == null)
+                {
+                    Console.WriteLine("Boken finns inte i butikens lager.");
+                    PressKeyToContinue();
+                    return;
+                }
+
+                if (bookBalance.AmountInStock <= 1)
+                {
+                    context.BookBalances.Remove(bookBalance);
+                    context.SaveChanges();
+                    Console.WriteLine($"\nBoken '{TruncateString(bookBalance.IsbnNavigation.Title, 40)}' har tagits bort helt från {selectedStore.StoreName}.");
+                }
+                else
+                {
+                    bookBalance.AmountInStock--;
+                    context.SaveChanges();
+                    Console.WriteLine($"\nBoken '{TruncateString(bookBalance.IsbnNavigation.Title, 40)}' har minskats med 1 i {selectedStore.StoreName}.");
+                    Console.WriteLine($"Nytt antal i lager: {bookBalance.AmountInStock}");
                 }
             }
             catch (Exception ex)
