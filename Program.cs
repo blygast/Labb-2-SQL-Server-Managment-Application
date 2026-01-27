@@ -7,7 +7,7 @@ namespace BokhandelApp
     {
         private const string MenuChoice_ListStock = "1";
         private const string MenuChoice_Exit = "0";
-
+        private const int TitleMaxLength = 30;
         static void Main(string[] args)
         {
             bool running = true;
@@ -90,7 +90,7 @@ namespace BokhandelApp
                     return;
                 }
 
-                // fortsätt här!!!!!!
+                DisplayStockForStore(selectedStore);
             }
             catch (Exception ex)
             {
@@ -103,6 +103,39 @@ namespace BokhandelApp
             }
         }
 
+        static void DisplayStockForStore(Store selectedStore)
+        {
+            Console.Clear();
+            Console.WriteLine($"\n <-- Lagersaldo för: {selectedStore.StoreName} -->\n");
+            Console.WriteLine($"{"ISBN",-15} {"Titel",-30} {"Antal",-10}");
+            Console.WriteLine(new string('-', 60));
+
+            if (!selectedStore.BookBalances.Any())
+            {
+                Console.WriteLine("Lagerstatus saknas för denna butik.");
+                return;
+            }
+
+            var orderedBalances = selectedStore.BookBalances
+                .OrderBy(b => b.IsbnNavigation.Title);
+
+            foreach (var balance in orderedBalances)
+            {
+                string title = TruncateString(balance.IsbnNavigation.Title, TitleMaxLength);
+                Console.WriteLine($"{balance.Isbn,-15} {title,-30} {balance.AmountInStock,-10}");
+            }
+        }
+
+        static string TruncateString(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+
+            if (value.Length <= maxLength)
+                return value;
+
+            return value[..(maxLength - 3)] + "...";
+        }
 
         static void PressKeyToContinue()
         {
